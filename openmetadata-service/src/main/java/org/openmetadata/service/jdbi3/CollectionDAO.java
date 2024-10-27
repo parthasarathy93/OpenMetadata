@@ -143,7 +143,7 @@ import org.openmetadata.service.util.JsonUtils;
 import org.openmetadata.service.util.jdbi.BindFQN;
 import org.openmetadata.service.util.jdbi.BindUUID;
 
-public interface CollectionDAO {
+public interface  CollectionDAO {
   @CreateSqlObject
   DatabaseDAO databaseDAO();
 
@@ -2856,7 +2856,7 @@ public interface CollectionDAO {
       String fqnHash =
           requiresFqnHash ? FullyQualifiedName.buildHash(targetFQNPrefix) : targetFQNPrefix;
       Map<String, List<TagLabel>> resultSet = new LinkedHashMap<>();
-      List<Pair<String, TagLabel>> tags = getTagsInternalByPrefix(fqnHash, postfix);
+      List<Pair<String, TagLabel>> tags = getTagsInternalByPrefix(fqnHash+postfix);
       tags.forEach(
           pair -> {
             String targetHash = pair.getLeft();
@@ -2893,7 +2893,7 @@ public interface CollectionDAO {
                 + "  ON ta.fqnHash = tu.tagFQNHash "
                 + "  WHERE tu.source = 0 "
                 + ") AS combined_data "
-                + "WHERE combined_data.targetFQNHash  LIKE CONCAT(:targetFQNHashPrefix, :postfix)",
+                + "WHERE combined_data.targetFQNHash  LIKE :targetFQNHashPrefix",
         connectionType = MYSQL)
     @ConnectionAwareSqlQuery(
         value =
@@ -2909,11 +2909,11 @@ public interface CollectionDAO {
                 + "  JOIN tag_usage AS tu ON ta.fqnHash = tu.tagFQNHash "
                 + "  WHERE tu.source = 0 "
                 + ") AS combined_data "
-                + "WHERE combined_data.targetFQNHash LIKE CONCAT(:targetFQNHashPrefix, :postfix)",
+                + "WHERE combined_data.targetFQNHash LIKE :targetFQNHashPrefix",
         connectionType = POSTGRES)
     @RegisterRowMapper(TagLabelRowMapperWithTargetFqnHash.class)
     List<Pair<String, TagLabel>> getTagsInternalByPrefix(
-        @Bind("targetFQNHashPrefix") String targetFQNHashPrefix, @Bind("postfix") String postfix);
+        @Bind("targetFQNHashPrefix") String targetFQNHashPrefix);
 
     @SqlQuery("SELECT * FROM tag_usage")
     @Deprecated(since = "Release 1.1")
