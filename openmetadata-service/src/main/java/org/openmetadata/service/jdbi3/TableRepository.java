@@ -1051,7 +1051,7 @@ public class TableRepository extends EntityRepository<Table> {
         daoCollection
             .fieldRelationshipDAO()
             .listBidirectionalByPrefix(
-                table.getFullyQualifiedName(),
+                table.getFullyQualifiedName()+"%",
                 FIELD_RELATION_COLUMN_TYPE,
                 FIELD_RELATION_COLUMN_TYPE,
                 Relationship.JOINED_WITH.ordinal())
